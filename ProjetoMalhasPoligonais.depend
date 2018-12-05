@@ -87,11 +87,13 @@
 	<stdlib.h>
 	<GL/freeglut.h>
 
-1447091822 source:/home/clodoaldo/UTFPR/ComputacaoGrafica/projFinal/poligonais/05-03-MalhaOBJ.cpp
+1544029796 source:/home/clodoaldo/UTFPR/ComputacaoGrafica/projFinal/poligonais/05-03-MalhaOBJ.cpp
 	"bibutil.h"
 	<stdio.h>
 	<stdlib.h>
-	<GL/freeglut.h>
+	<GL/glut.h>
+	<GL/gl.h>
+	<GL/glu.h>
 
 1494287658 /home/clodoaldo/UTFPR/ComputacaoGrafica/projFinal/poligonais/bibutil.h
 	<stdio.h>

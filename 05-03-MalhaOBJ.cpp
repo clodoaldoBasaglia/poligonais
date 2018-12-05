@@ -1,10 +1,15 @@
 #include "bibutil.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <GL/freeglut.h>
+#include <GL/glut.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+
+
+// CLODOALDO
 
 //#define DEBUG 1
-// Vari·veis para controles de navegaÁ„o
+// Vari√°veis para controles de navega√ß√£o
 GLfloat angle, fAspect;
 GLfloat rotX, rotY, rotX_ini, rotY_ini;
 GLfloat obsX, obsY, obsZ, obsX_ini, obsY_ini, obsZ_ini;
@@ -12,8 +17,11 @@ int x_ini,y_ini,bot;
 
 // Apontador para objeto
 OBJ *objeto;
+OBJ * casa;
 
-// FunÁ„o respons·vel pela especificaÁ„o dos par‚metros de iluminaÁ„o
+
+
+// Fun√ß√£o respons√°vel pela especifica√ß√£o dos par√¢metros de ilumina√ß√£o
 void DefineIluminacao (void)
 {
 	GLfloat luzAmbiente[4]={0.2,0.2,0.2,1.0};
@@ -26,25 +34,25 @@ void DefineIluminacao (void)
 	GLint especMaterial = 60;
 
 
-	// Define a reflet‚ncia do material
+	// Define a reflet√¢ncia do material
 	glMaterialfv(GL_FRONT,GL_SPECULAR, especularidade);
-	// Define a concentraÁ„o do brilho
+	// Define a concentra√ß√£o do brilho
 	glMateriali(GL_FRONT,GL_SHININESS,especMaterial);
 
 	// Ativa o uso da luz ambiente
 	glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbiente);
 
-	// Define os par‚metros da luz de n˙mero 0
+	// Define os par√¢metros da luz de n√∫mero 0
 	glLightfv(GL_LIGHT0, GL_AMBIENT, luzAmbiente);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, luzDifusa );
 	glLightfv(GL_LIGHT0, GL_SPECULAR, luzEspecular );
 	glLightfv(GL_LIGHT0, GL_POSITION, posicaoLuz );
 }
 
-// FunÁ„o callback de redesenho da janela de visualizaÁ„o
+// Fun√ß√£o callback de redesenho da janela de visualiza√ß√£o
 void Desenha(void)
 {
-	// Limpa a janela de visualizaÁ„o com a cor
+	// Limpa a janela de visualiza√ß√£o com a cor
 	// de fundo definida previamente
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
@@ -64,54 +72,54 @@ void Desenha(void)
 	glutSwapBuffers();
 }
 
-// FunÁ„o usada para especificar a posiÁ„o do observador virtual
+// Fun√ß√£o usada para especificar a posi√ß√£o do observador virtual
 void PosicionaObservador(void){
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();//carrega a matriz de identidade
-    gluLookAt(obsX,obsY,obsZ,//posiÁ„o da c‚mera
-              0.0,0.0,0.0,//para onde a c‚mera aponta
+    gluLookAt(obsX,obsY,obsZ,//posi√ß√£o da c√¢mera
+              0.0,0.0,0.0,//para onde a c√¢mera aponta
               0.0,1.0,0.0);//vetor view-up//
 }
 
-// FunÁ„o usada para especificar o volume de visualizaÁ„o
+// Fun√ß√£o usada para especificar o volume de visualiza√ß√£o
 void EspecificaParametrosVisualizacao(void)
 {
 
-	// Especifica sistema de coordenadas de projeÁ„o
+	// Especifica sistema de coordenadas de proje√ß√£o
 	glMatrixMode(GL_PROJECTION);
-	// Inicializa sistema de coordenadas de projeÁ„o
+	// Inicializa sistema de coordenadas de proje√ß√£o
 	glLoadIdentity();
 
-	// Especifica a projeÁ„o perspectiva(angulo,aspecto,dnear,dfar)
+	// Especifica a proje√ß√£o perspectiva(angulo,aspecto,dnear,dfar)
 	gluPerspective(angle,fAspect,0.01,1200);
 
-	// Chama as funÁıes que especificam os par‚metros da c‚mera e os par‚metros de iluminaÁ„o
+	// Chama as fun√ß√µes que especificam os par√¢metros da c√¢mera e os par√¢metros de ilumina√ß√£o
 	PosicionaObservador();
 	DefineIluminacao();
 
 }
 
-// FunÁ„o callback chamada quando o tamanho da janela È alterado
+// Fun√ß√£o callback chamada quando o tamanho da janela √© alterado
 void AlteraTamanhoJanela(GLsizei w, GLsizei h)
 {
-	// Para previnir uma divis„o por zero
+	// Para previnir uma divis√£o por zero
 	if ( h == 0 ) h = 1;
 
-	// Especifica as dimensıes da viewport
+	// Especifica as dimens√µes da viewport
 	glViewport(0, 0, w, h);
 
-	// Calcula a correÁ„o de aspecto
+	// Calcula a corre√ß√£o de aspecto
 	fAspect = (GLfloat)w/(GLfloat)h;
 
 	EspecificaParametrosVisualizacao();
 }
 
-// FunÁ„o callback chamada para gerenciar eventos de teclas normais (ESC)
+// Fun√ß√£o callback chamada para gerenciar eventos de teclas normais (ESC)
 void Teclas (unsigned char tecla, int x, int y)
 {
 	if(tecla==27) // ESC ?
 	{
-		// Libera memÛria e finaliza programa
+		// Libera mem√≥ria e finaliza programa
 		LiberaObjeto(objeto);
 		exit(0);
 	}
@@ -125,7 +133,7 @@ void Teclas (unsigned char tecla, int x, int y)
 	glutPostRedisplay();
 }
 
-// FunÁ„o callback para tratar eventos de teclas especiais
+// Fun√ß√£o callback para tratar eventos de teclas especiais
 void TeclasEspeciais (int tecla, int x, int y)
 {
 	switch (tecla)
@@ -139,12 +147,12 @@ void TeclasEspeciais (int tecla, int x, int y)
 	glutPostRedisplay();
 }
 
-// FunÁ„o callback para eventos de botıes do mouse
+// Fun√ß√£o callback para eventos de bot√µes do mouse
 void GerenciaMouse(int button, int state, int x, int y)
 {
 	if(state==GLUT_DOWN)
 	{
-		// Salva os par‚metros atuais
+		// Salva os par√¢metros atuais
 		x_ini = x;
 		y_ini = y;
 		obsX_ini = obsX;
@@ -157,36 +165,36 @@ void GerenciaMouse(int button, int state, int x, int y)
 	else bot = -1;
 }
 
-// FunÁ„o callback para eventos de movimento do mouse
+// Fun√ß√£o callback para eventos de movimento do mouse
 #define SENS_ROT	5.0
 #define SENS_OBS	15.0
 #define SENS_TRANSL	20.0
 void GerenciaMovim(int x, int y)
 {
-	// Bot„o esquerdo
+	// Bot√£o esquerdo
 	if(bot==GLUT_LEFT_BUTTON)
 	{
-		// Calcula diferenÁas
+		// Calcula diferen√ßas
 		int deltax = x_ini - x;
 		int deltay = y_ini - y;
-		// E modifica ‚ngulos
+		// E modifica √¢ngulos
 		rotY = rotY_ini - deltax/SENS_ROT;
 		rotX = rotX_ini - deltay/SENS_ROT;
 	}
-	// Bot„o direito (zoom-in e zoom-out)
+	// Bot√£o direito (zoom-in e zoom-out)
 	else if(bot==GLUT_RIGHT_BUTTON){
-		// Calcula diferenÁa
+		// Calcula diferen√ßa
 		int deltaz = y_ini - y;
-		// E modifica dist‚ncia do observador
+		// E modifica dist√¢ncia do observador
 		obsZ = obsZ_ini + deltaz/SENS_OBS;
 	}
-	// Bot„o do meio
+	// Bot√£o do meio
 	else if(bot==GLUT_MIDDLE_BUTTON)
 	{
-		// Calcula diferenÁas
+		// Calcula diferen√ßas
 		int deltax = x_ini - x;
 		int deltay = y_ini - y;
-		// E modifica posiÁıes
+		// E modifica posi√ß√µes
 		obsX = obsX_ini + deltax/SENS_TRANSL;
 		obsY = obsY_ini - deltay/SENS_TRANSL;
 	}
@@ -194,91 +202,93 @@ void GerenciaMovim(int x, int y)
 	glutPostRedisplay();
 }
 
-// FunÁ„o respons·vel por inicializar par‚metros e vari·veis
+// Fun√ß√£o respons√°vel por inicializar par√¢metros e vari√°veis
 void Inicializa (void)
 {
 	char nomeArquivo[30];
 
-	// Define a cor de fundo da janela de visualizaÁ„o como branca
+	// Define a cor de fundo da janela de visualiza√ß√£o como branca
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-	// Habilita a definiÁ„o da cor do material a partir da cor corrente
+	// Habilita a defini√ß√£o da cor do material a partir da cor corrente
 	glEnable(GL_COLOR_MATERIAL);
-	//Habilita o uso de iluminaÁ„o
+	//Habilita o uso de ilumina√ß√£o
 	glEnable(GL_LIGHTING);
-	// Habilita a luz de n˙mero 0
+	// Habilita a luz de n√∫mero 0
 	glEnable(GL_LIGHT0);
 	// Habilita o depth-buffering
 	glEnable(GL_DEPTH_TEST);
 
-	// Habilita o modelo de tonalizaÁ„o de Gouraud
+	// Habilita o modelo de tonaliza√ß√£o de Gouraud
 	glShadeModel(GL_SMOOTH);
 
-	// Inicializa a vari·vel que especifica o ‚ngulo da projeÁ„o
+	// Inicializa a vari√°vel que especifica o √¢ngulo da proje√ß√£o
 	// perspectiva
 	angle=55;
 
-	// Inicializa as vari·veis usadas para alterar a posiÁ„o do
+	// Inicializa as vari√°veis usadas para alterar a posi√ß√£o do
 	// observador virtual
 	obsX = obsY = 0;
-	obsZ = 100;
+	obsZ = 10000;
 
-	// LÍ o nome do arquivo e chama a rotina de leitura
+	// L√™ o nome do arquivo e chama a rotina de leitura
 	//printf("Digite o nome do arquivo que contem o modelo 3D: ");
 	//gets(nomeArquivo);
 
 	// Carrega o objeto 3D
-	objeto = CarregaObjeto("monkey.obj",true);
+	casa = CarregaObjeto("house.obj",true);
+
     printf("Objeto carregado!");
 
 	// E calcula o vetor normal em cada face
-	if(objeto->normais)
+	if(casa->normais)
 	{
-		// Se j· existirem normais no arquivo, apaga elas
-		free(objeto->normais);
-		objeto->normais_por_vertice = false;
+		// Se j√° existirem normais no arquivo, apaga elas
+		free(casa->normais);
+		casa->normais_por_vertice = false;
 	}
-	CalculaNormaisPorFace(objeto);
+	CalculaNormaisPorFace(casa);
+
 }
 
 // Programa Principal
 int main(int argc, char *argv[])
 {
     glutInit(&argc, argv);
-	// Define do modo de operaÁ„o da GLUT
+	// Define do modo de opera√ß√£o da GLUT
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 
-	// Especifica a posiÁ„o inicial da janela GLUT
+	// Especifica a posi√ß√£o inicial da janela GLUT
 	glutInitWindowPosition(5,5);
 
 	// Especifica o tamanho inicial em pixels da janela GLUT
 	glutInitWindowSize(450,450);
 
-	// Cria a janela passando como argumento o tÌtulo da mesma
-	glutCreateWindow("Desenho de um objeto 3D com c·lculo do vetor normal");
+	// Cria a janela passando como argumento o t√≠tulo da mesma
+	glutCreateWindow("Desenho de um objeto 3D com c√°lculo do vetor normal");
 
-	// Registra a funÁ„o callback de redesenho da janela de visualizaÁ„o
+	// Registra a fun√ß√£o callback de redesenho da janela de visualiza√ß√£o
 	glutDisplayFunc(Desenha);
 
-	// Registra a funÁ„o callback de redimensionamento da janela de visualizaÁ„o
+	// Registra a fun√ß√£o callback de redimensionamento da janela de visualiza√ß√£o
 	glutReshapeFunc(AlteraTamanhoJanela);
 
-	// Registra a funÁ„o callback para tratamento das teclas normais
+	// Registra a fun√ß√£o callback para tratamento das teclas normais
 	glutKeyboardFunc (Teclas);
 
-	// Registra a funÁ„o callback para tratamento das teclas especiais
+	// Registra a fun√ß√£o callback para tratamento das teclas especiais
 	glutSpecialFunc (TeclasEspeciais);
 
-	// Registra a funÁ„o callback para eventos de botıes do mouse
+	// Registra a fun√ß√£o callback para eventos de bot√µes do mouse
 	glutMouseFunc(GerenciaMouse);
 
-	// Registra a funÁ„o callback para eventos de movimento do mouse
+	// Registra a fun√ß√£o callback para eventos de movimento do mouse
 	glutMotionFunc(GerenciaMovim);
 
-	// Chama a funÁ„o respons·vel por fazer as inicializaÁıes
+	// Chama a fun√ß√£o respons√°vel por fazer as inicializa√ß√µes
 	Inicializa();
 
-	// Inicia o processamento e aguarda interaÁıes do usu·rio
+	// Inicia o processamento e aguarda intera√ß√µes do usu√°rio
 	glutMainLoop();
 
 	return 0;
